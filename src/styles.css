@@ -1,0 +1,311 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "M PLUS Rounded 1c", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC",
+    ui-rounded, ui-sans-serif, system-ui, sans-serif;
+
+  --color-sakura: #ffb7c5;
+  --color-sakura-deep: #f48ca3;
+  --color-mint: #a8e6e1;
+  --color-mint-deep: #6fcfc8;
+  --color-cream: #fff8f4;
+  --color-cream-deep: #f3e6dc;
+  --color-ink: #4a3f55;
+  --color-ink-soft: #7a7088;
+  --color-plum: #9b7ebc;
+  --color-night: #16122a;
+  --color-night-2: #221c40;
+  --color-night-card: #2c2554;
+  --color-foam: #ffffff;
+
+  --radius-sm: 0.625rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.125rem;
+  --radius-xl: 1.5rem;
+
+  --shadow-border:
+    0 0 0 1px color-mix(in oklab, var(--color-ink) 8%, transparent),
+    0 1px 2px color-mix(in oklab, var(--color-sakura) 22%, transparent),
+    0 8px 24px color-mix(in oklab, var(--color-sakura) 18%, transparent);
+}
+
+.dark {
+  --shadow-border: 0 0 0 1px color-mix(in oklab, white 12%, transparent);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overflow-anchor: none;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background: var(--color-cream);
+    color: var(--color-ink);
+  }
+
+  .dark body {
+    background: var(--color-night);
+    color: var(--color-cream);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  [role="button"],
+  a {
+    touch-action: manipulation;
+  }
+}
+
+/* Fill the iframe / window. Never use position:fixed or 100svh here —
+   iPad Safari iframes map those to the parent viewport, so painted buttons
+   and tap targets drift apart and every click misses. */
+.app-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.app-frame input,
+.app-frame textarea,
+.composer-input {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  touch-action: auto;
+  caret-color: currentcolor;
+  font-size: 16px;
+}
+
+.char-pane,
+.quote-bubble,
+.sky {
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 80% at 20% 0%, color-mix(in oklab, var(--color-mint) 45%, transparent), transparent 55%),
+    radial-gradient(90% 70% at 90% 10%, color-mix(in oklab, var(--color-sakura) 50%, transparent), transparent 50%),
+    linear-gradient(180deg, #c8e8ff 0%, #ffe4ec 48%, var(--color-cream) 100%);
+}
+
+.dark .sky {
+  background:
+    radial-gradient(90% 60% at 20% 0%, color-mix(in oklab, #5b4a9a 40%, transparent), transparent 55%),
+    radial-gradient(80% 50% at 90% 10%, color-mix(in oklab, #3d5a8a 35%, transparent), transparent 50%),
+    linear-gradient(180deg, #0e0b1f 0%, #1a1630 55%, #24183c 100%);
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, 0.38fr) minmax(0, 0.62fr);
+  height: 100%;
+  padding:
+    max(0.5rem, env(safe-area-inset-top))
+    max(0.6rem, env(safe-area-inset-right))
+    max(0.5rem, env(safe-area-inset-bottom))
+    max(0.6rem, env(safe-area-inset-left));
+  gap: 0.5rem;
+}
+
+@media (orientation: landscape) and (min-width: 768px) {
+  .app-grid {
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: 1fr;
+    padding:
+      max(0.6rem, env(safe-area-inset-top))
+      max(0.8rem, env(safe-area-inset-right))
+      max(0.6rem, env(safe-area-inset-bottom))
+      max(0.8rem, env(safe-area-inset-left));
+    gap: 0.75rem;
+  }
+}
+
+.char-pane,
+.panel-pane {
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.panel-pane {
+  position: relative;
+  z-index: 2;
+  container-type: size;
+  container-name: panel;
+}
+
+.glass {
+  background: color-mix(in oklab, var(--color-foam) 88%, transparent);
+  box-shadow: var(--shadow-border);
+}
+
+.dark .glass {
+  background: color-mix(in oklab, var(--color-night-card) 94%, transparent);
+}
+
+.quote-bubble {
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--color-foam) 72%, transparent);
+  box-shadow: var(--shadow-border);
+}
+
+.dark .quote-bubble {
+  background: color-mix(in oklab, var(--color-night-2) 70%, transparent);
+}
+
+.char-glow {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+  width: 55%;
+  height: 28%;
+  translate: -50% 0;
+  background: radial-gradient(ellipse, color-mix(in oklab, var(--color-mint) 45%, transparent), transparent 70%);
+  filter: blur(18px);
+}
+
+.dark .char-glow {
+  background: radial-gradient(ellipse, color-mix(in oklab, var(--color-plum) 35%, transparent), transparent 70%);
+}
+
+.petal {
+  position: absolute;
+  top: -8%;
+  border-radius: 80% 0 80% 0;
+  background: var(--color-sakura);
+  transform: rotate(var(--petal-rot, 20deg));
+  animation-name: petal-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  pointer-events: none;
+}
+
+.dark .petal {
+  background: color-mix(in oklab, var(--color-sakura) 70%, var(--color-plum));
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translate3d(0, -8%, 0) rotate(var(--petal-rot, 20deg));
+  }
+  100% {
+    transform: translate3d(28px, 112%, 0) rotate(calc(var(--petal-rot, 20deg) + 360deg));
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.char-bob {
+  animation: bob 4.4s ease-in-out infinite;
+}
+
+.timer-ring {
+  width: min(34vmin, 210px);
+  flex-shrink: 0;
+}
+
+@media (orientation: portrait) {
+  .timer-ring {
+    width: min(22vmin, 148px);
+  }
+}
+
+@media (max-height: 740px) {
+  .timer-ring {
+    width: min(22vmin, 128px);
+  }
+}
+
+@media (orientation: landscape) and (min-width: 768px) and (max-height: 820px) {
+  .timer-ring {
+    width: min(26vmin, 160px);
+  }
+}
+
+@container panel (max-height: 560px) {
+  .quote-bubble {
+    display: none;
+  }
+  .timer-ring {
+    width: min(20vmin, 110px);
+  }
+  .stats-bar {
+    display: none;
+  }
+}
+
+.hide-scroll {
+  scrollbar-width: none;
+  touch-action: pan-y;
+}
+.hide-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes task-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.task-input-nudge {
+  animation: task-nudge 280ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .petal,
+  .char-bob {
+    animation: none !important;
+  }
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
