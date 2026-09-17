@@ -20,6 +20,24 @@ export interface Task {
   done: boolean;
   tomatoes: number;
   createdAt: number;
+  updatedAt: number;
+}
+
+/** A counted focus completion: the deadline that was counted, the local
+ *  day-key it was logged under, and the task credited. `day`/`taskId` are
+ *  stored (not recomputed) so merge floors stay correct across timezone
+ *  changes and let per-task tomatoes heal the max-join undercount. */
+export interface CountedEnd {
+  at: number;
+  day: string;
+  taskId?: string | null;
+}
+
+/** A deleted task. `at` lets the merge cap evict by recency instead of by
+ *  random-id sort order (which could evict yesterday's delete first). */
+export interface Tombstone {
+  id: string;
+  at: number;
 }
 
 export const DEFAULT_SETTINGS: Settings = {

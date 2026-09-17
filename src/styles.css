@@ -73,6 +73,11 @@
   [role="button"],
   a {
     touch-action: manipulation;
+    /* Long-press on button text/icon starts a selection or the callout menu
+       on iOS, which cancels the touch (touchcancel) and the tap dies. */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
   }
 }
 
@@ -84,6 +89,12 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+  /* iOS Safari desyncs iframe hit-testing when the document paints on the
+     slow path — force the app onto its own composited plane so tap targets
+     stay glued to the painted pixels. Also keeps double-tap zoom gestures
+     from eating the first tap anywhere in the frame. */
+  transform: translateZ(0);
+  touch-action: manipulation;
 }
 
 .app-frame input,

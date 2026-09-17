@@ -5,6 +5,7 @@ import { press } from "@/lib/pomodoro/press";
 import { pickQuote, QUOTES } from "@/lib/pomodoro/quotes";
 import { PHASE_LABEL, selectCharState, usePomodoro } from "@/lib/pomodoro/store";
 import { QuoteBubble } from "./QuoteBubble";
+import { stashOpenerFocus } from "@/lib/pomodoro/focus";
 import { StatsBar } from "./StatsBar";
 import { TaskList } from "./TaskList";
 import { TimerRing } from "./TimerRing";
@@ -84,7 +85,13 @@ export function TimerPanel() {
           >
             {dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
           </IconBtn>
-          <IconBtn label="设置" onClick={() => setSettingsOpen(true)}>
+          <IconBtn
+            label="设置"
+            onClick={() => {
+              stashOpenerFocus();
+              setSettingsOpen(true);
+            }}
+          >
             <Settings className="size-5" />
           </IconBtn>
         </div>
@@ -98,7 +105,6 @@ export function TimerPanel() {
         status={status}
         justFinished={justFinished}
         onPress={primaryAction}
-        pressLabel={primaryLabel}
       />
 
       <div className="flex items-center justify-center gap-1.5" aria-label="本轮进度">

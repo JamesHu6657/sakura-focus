@@ -24,7 +24,6 @@ export function TimerRing({
   status: TimerStatus;
   justFinished: boolean;
   onPress: () => void;
-  pressLabel?: string;
 }) {
   const remainingMs = useRemainingMs();
   const ratio = durationMs <= 0 ? 0 : Math.min(1, Math.max(0, remainingMs / durationMs));

@@ -15,15 +15,20 @@ export const TaskList = memo(function TaskList() {
   const [nudge, setNudge] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const lastCommitAt = useRef(0);
+  const composing = useRef(false);
+  const compEndAt = useRef(0);
 
   function commitNewTask(): boolean {
     const el = inputRef.current;
     const value = (el?.value ?? "").trim();
     if (!value) {
+      // The press handler already committed and cleared the input — this
+      // re-entry is the form-submit fallback from the same tap. No-op
+      // silently; only nudge a genuinely empty submission.
+      if (Date.now() - lastCommitAt.current < 400) return true;
       setNudge(true);
       return false;
     }
-    if (Date.now() - lastCommitAt.current < 400) return true;
     lastCommitAt.current = Date.now();
     addTask(value);
     if (el) el.value = "";
@@ -136,6 +141,33 @@ export const TaskList = memo(function TaskList() {
           autoCorrect="off"
           autoCapitalize="none"
           spellCheck={false}
+          onCompositionStart={() => {
+            composing.current = true;
+          }}
+          onCompositionEnd={() => {
+            composing.current = false;
+            // Chrome fires compositionend BEFORE the confirming Enter's
+            // keydown (with isComposing=false) — a timestamp guard covers
+            // that ordering where the flag alone would not.
+            compEndAt.current = Date.now();
+          }}
+          onKeyDown={(e) => {
+            if (e.key !== "Enter") return;
+            // Don't let an IME conversion-confirm Enter submit the form.
+            if (
+              e.nativeEvent.isComposing ||
+              composing.current ||
+              Date.now() - compEndAt.current < 50
+            ) {
+              e.preventDefault();
+              return;
+            }
+            // Commit in keydown: preventDefault stops implicit submission,
+            // so no synthesized click on the submit button can be eaten by
+            // the ghost-click window.
+            e.preventDefault();
+            commitNewTask();
+          }}
           onAnimationEnd={() => setNudge(false)}
           className={cn(
             "composer-input h-12 min-w-0 flex-1 rounded-md bg-foam/80 px-3 text-ink shadow-[var(--shadow-border)] outline-none",
@@ -174,6 +206,7 @@ function TaskTitle({
 }) {
   const [text, setText] = useState(value);
   const composing = useRef(false);
+  const compEndAt = useRef(0);
   useEffect(() => {
     if (!composing.current) setText(value);
   }, [value]);
@@ -187,6 +220,15 @@ function TaskTitle({
 
   function onKey(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
+      // Enter during an IME conversion confirms the candidate, not the
+      // edit. Chrome dispatches compositionend before this keydown, so the
+      // timestamp window covers what isComposing misses.
+      if (
+        e.nativeEvent.isComposing ||
+        composing.current ||
+        Date.now() - compEndAt.current < 50
+      )
+        return;
       e.preventDefault();
       commit();
     }
@@ -208,6 +250,7 @@ function TaskTitle({
         }}
         onCompositionEnd={(e) => {
           composing.current = false;
+          compEndAt.current = Date.now();
           setText(e.currentTarget.value);
         }}
         onBlur={commit}

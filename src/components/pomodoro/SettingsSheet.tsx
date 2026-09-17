@@ -3,6 +3,7 @@ import { Bell, BellOff, Monitor, Moon, Sun, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { press } from "@/lib/pomodoro/press";
 import { requestNotifyPerm, usePomodoro } from "@/lib/pomodoro/store";
+import { restoreOpenerFocus } from "@/lib/pomodoro/focus";
 import type { ThemePref } from "@/lib/pomodoro/types";
 
 export function SettingsSheet() {
@@ -30,6 +31,7 @@ export function SettingsSheet() {
   useEffect(() => {
     if (!open) return;
     dialogRef.current?.focus();
+    return () => restoreOpenerFocus();
   }, [open]);
 
   if (!open) return null;
