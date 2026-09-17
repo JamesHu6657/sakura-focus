@@ -24,5 +24,6 @@ ios/AppResources/
 ios/web/dist/
 ios/SakuraFocus.xcodeproj/
 ios/build/
+ios/build-sim/
 ios/out/
 ios/SakuraFocus/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png
