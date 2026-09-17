@@ -51,7 +51,7 @@ final class BundleSchemeHandler: NSObject, WKURLSchemeHandler {
             mimeType: mimeType(for: pathExtension),
             expectedContentLength: length,
             textEncodingName: nil
-        )!
+        )
     }
 
     private static func mimeType(for ext: String) -> String {
