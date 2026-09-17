@@ -20,7 +20,7 @@ startup.sh
 public/__grok/
 
 # iOS build artifacts
-ios/Web/
+ios/AppResources/
 ios/web/dist/
 ios/SakuraFocus.xcodeproj/
 ios/build/

@@ -9,7 +9,7 @@ targets:
       - path: SakuraFocus
         excludes:
           - Info.plist
-      - path: Web
+      - path: AppResources/Web
         type: folder
     settings:
       base:

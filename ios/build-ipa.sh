@@ -23,9 +23,11 @@ fi
 npx vite build --config ios/web/vite.config.ts
 
 # 2. Stage the bundle as the app's Web folder (folder reference -> copied verbatim)
-rm -rf "$IOS/Web"
-mkdir -p "$IOS/Web"
-cp -R "$ROOT/ios/web/dist/" "$IOS/Web/"
+# NOTE: staged under AppResources/ — a top-level ios/Web collides with ios/web
+# on macOS's case-insensitive filesystem and wipes the web sources.
+rm -rf "$IOS/AppResources"
+mkdir -p "$IOS/AppResources"
+cp -R "$ROOT/ios/web/dist/" "$IOS/AppResources/Web"
 
 # 3. App icon: upscale the PWA icon to the single 1024 universal slot
 APPICON="$IOS/SakuraFocus/Assets.xcassets/AppIcon.appiconset"

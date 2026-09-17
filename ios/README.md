@@ -33,6 +33,7 @@ cd ios && xcodegen generate && open SakuraFocus.xcodeproj
 ios/web/            SPA 入口（index.html / main.tsx / vite.config.ts）
 ios/SakuraFocus/    Swift 源码 + Info.plist + 图标
 ios/project.yml     XcodeGen 工程定义（SakuraFocus.xcodeproj 由它生成，不入库）
-ios/Web/            构建产物 = ios/web/dist 拷贝（不入库）
+ios/AppResources/Web/ 构建产物 = ios/web/dist 拷贝（不入库；放 AppResources 下
+                    是因为 macOS 大小写不敏感，顶层 ios/Web 会跟 ios/web 冲突）
 ios/build-ipa.sh    一键：web 构建 → 图标 → xcodegen → xcodebuild → IPA
 ```
